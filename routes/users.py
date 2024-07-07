@@ -5,6 +5,10 @@ user = Blueprint('user', __name__)
 
 userAdmin = Usuarios()
 
+@user.route('/')
+def home():
+    return '<h1>Servidor funcionando</h1>'
+
 @user.route('/add', methods=['POST'])
 def addUser():
     usuario = request.form['usuario']

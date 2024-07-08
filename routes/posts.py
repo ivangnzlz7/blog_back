@@ -4,7 +4,7 @@ from models.models import  Posts
 posts = Blueprint("posts", __name__)
 
 post = Posts()
-
+ 
 
 @posts.route('/user/<int:usuario>/posts/<int:post_id>', methods=['GET', 'DELETE'])
 def postONe(usuario, post_id):

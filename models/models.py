@@ -42,6 +42,7 @@ class Usuarios:
         return self.cursor.lastrowid 
     
     def modify_password(self, usuario, password):
+
         self.cursor.execute(f'SELECT * FROM Usuarios WHERE Usuarios.usuario = "{usuario}"')
         exists = self.cursor.fetchone()
 
@@ -55,6 +56,15 @@ class Usuarios:
             return self.cursor.rowcount > 0
         
         return f'{usuario} no Existe'
+    
+    def checkUser(self, usuario, password):
+        self.cursor.execute(f'SELECT * FROM Usuarios WHERE Usuarios.usuario = "{usuario}" AND Usuarios.password = "{password}"')
+        exists = self.cursor.fetchone()
+
+        if exists:
+            return True
+        
+        return False
 
 
 
@@ -87,40 +97,47 @@ class Posts:
             )
             return self.cursor.fetchall()
 
-    def searchPostOne(self, postID, usuario_id):
+    def searchPostOne(self, titulo, usuario_id):
             self.cursor.execute(
-                f"SELECT * FROM Posts WHERE Posts.post_id={postID} AND Posts.usuario_id={usuario_id}"
+                f"SELECT * FROM Posts WHERE Posts.usuario_id={usuario_id} AND Posts.titulo='{titulo}'"
             )
             return self.cursor.fetchone()
 
-    def deletePost(self, postID, usuario_id):
+    def deletePost(self, titulo, usuario_id):
             self.cursor.execute(
-                f"DELETE FROM Posts WHERE Posts.post_id={postID} AND Posts.usuario_id={usuario_id}"
+                f"DELETE FROM Posts WHERE  Posts.usuario_id={usuario_id} AND Posts.titulo='{titulo}'"
             )
             self.mybasededatos.commit()
             return self.cursor.rowcount > 0
 
-    def updatePost(self, postID, titulo=None, contenido=None):
+    def updatePost(self, usuario_id, tituloDB, titulo, contenido):
+        self.cursor.execute(f'SELECT post_id FROM Posts WHERE Posts.usuario_id={usuario_id} AND Posts.titulo="{tituloDB}"')
+        results =  self.cursor.fetchone()
+        post_id = results.get('post_id')
 
-        if titulo != None and contenido != None:
+        if results == None:
+            return 'No se ha encontrado el usuario'
+
+        if titulo and contenido:
             sql = (
                 "UPDATE Posts SET titulo = %s, contenido = %s WHERE Posts.post_id = %s"
             )
-            valores = (titulo, contenido, postID)
+            valores = (titulo, contenido, post_id)
             self.cursor.execute(sql, valores)
             self.mybasededatos.commit()
             return self.cursor.rowcount > 0
 
-        if titulo != None:
+        if titulo:
             sql = "UPDATE Posts SET titulo = %s WHERE Posts.post_id = %s"
-            valores = (titulo, postID)
+            valores = (titulo, post_id)
             self.cursor.execute(sql, valores)
             self.mybasededatos.commit()
             return self.cursor.rowcount > 0
 
-        if contenido != None:
+        if contenido:
             sql = "UPDATE Posts SET contenido = %s WHERE Posts.post_id = %s"
-            valores = (contenido, postID)
+            valores = (contenido, post_id)
             self.cursor.execute(sql, valores)
             self.mybasededatos.commit()
             return self.cursor.rowcount > 0
+

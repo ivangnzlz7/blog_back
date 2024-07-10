@@ -10,7 +10,7 @@ def home():
     return '<h1>Servidor funcionando</h1>'
 
 @user.route('/add', methods=['POST'])
-def addUser():
+def addUser(): 
     usuario = request.form['usuario']
     email = request.form['email']
     password = request.form['password']
@@ -26,3 +26,11 @@ def modify():
 
     userUp = userAdmin.modify_password(usuario, password)
     return jsonify(userUp)
+
+@user.route('/check', methods=['POST'])
+def checkUser():
+    usuario = request.form['usuario']
+    password = request.form['password']
+
+    userChek = userAdmin.checkUser(usuario, password)
+    return jsonify(userChek)

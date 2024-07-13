@@ -58,11 +58,12 @@ class Usuarios:
         return f'{usuario} no Existe'
     
     def checkUser(self, usuario, password):
-        self.cursor.execute(f'SELECT usuario_id FROM Usuarios WHERE Usuarios.usuario = "{usuario}" AND Usuarios.password = "{password}"')
+        self.cursor.execute(f'SELECT * FROM Usuarios WHERE Usuarios.usuario = "{usuario}" AND Usuarios.password = "{password}"')
         exists = self.cursor.fetchone()
 
         if exists:
-            return exists
+            result = self.cursor.lastrowid
+            return result
         
         return False
 
